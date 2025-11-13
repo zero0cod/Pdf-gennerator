@@ -579,8 +579,6 @@ async renderPageFooter(
     this.currentY += spacing;
     return this.calculateComponentHeight(component);
   }
-
- 
   renderTable(component: TableComponentForPdf) {
     const startY = this.currentY;
     const headerColor: [number, number, number] = (component.headerColor as [number, number, number]) || [41, 128, 185];
