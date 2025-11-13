@@ -303,3 +303,259 @@ export interface Component {
   textComponent?: TextComponent;
   graphComponent?: GraphComponent;
 }
+
+
+export interface ProcedureType {
+  procedureName: string;
+  procedureNo: string;
+  paperProcedureNo?: string;
+  isActive: boolean;
+  issueNo?: string;
+  issueDate?: string;
+  temperature?: string;
+  humidity?: string;
+  internationalStandardsUsed?: string;
+  preparedBy?: string;
+  approvedBy?: string;
+  ammendmentNo?: string;
+  amendmentDate?: string;
+  approvedDate?: string;
+  revisionRemark?: string;
+  attachments?: string[];
+  certificateApprovers: string[];
+  assignedTo?: string[];
+  worksheetData: WorksheetStateType[];
+}
+
+export interface CalibrationType {
+  type: "As Found" | "As Left";
+  procedure: ProcedureType;
+  startDate: string;
+  endDate: string;
+  calibrationTime: string;
+  passed: boolean;
+  showInCertificate: boolean;
+  status: "To Do" | "In Progress" | "Done";
+}
+
+export type CertificateTypeEnum = "Supplementary" | "Superseding" | "Revision";
+export type WorkTypeEnum =
+  | "At Lab"
+  | "Sub Con"
+  | "Customer Place"
+  | "On Site"
+  | "In House";
+
+export interface WorkType {
+  customer: string;
+  asset: string;
+  procedure: string;
+
+  startDate?: string;
+  finishDate?: string;
+  dueDate?: string;
+
+  isSalesOrderNoAvailable: boolean;
+  orderNo?: string;
+  workNo: string;
+  workType: WorkTypeEnum;
+  accreditation: any;
+  workStatus: "To Do" | "In Progress" | "Done";
+  remarks?: string;
+  comments?: string[];
+  certificate?: {
+    certificateIssuedTo: string;
+    certificateType: CertificateTypeEnum;
+    certificateAddress: string;
+    certificateTemplate: string;
+    certificateUrl: string;
+    certificateNo: string;
+  };
+  calibrations?: CalibrationType[];
+  attachments?: string[];
+}
+
+export type AssetType = CustomerAsset | ReferenceAsset;
+export interface BaseAssetType {
+  assetName: string;
+  make: string;
+  model: string;
+  range: string;
+  assetType: string;
+  isReference: boolean;
+  serialNo: string;
+  tagNo?: string;
+  assetImages?: string[];
+  assetRemarks: string;
+  calibrationFrequency: string;
+  lastCalibratedDate?: string;
+  calibrationDueDate?: string;
+}
+export interface CustomerAsset extends BaseAssetType {
+  customerId: string;
+  customer?: CustomerType;
+  assetStatus?: string;
+  lastReceivedDate?: string;
+  lastDeliveredDate?: string;
+}
+
+export interface ReferenceAsset extends BaseAssetType {
+  referenceWorksheetId?: string;
+  referenceWorksheet?: WorksheetStateType | null;
+  verificationDueDate?: string;
+  certificateUrl?: string;
+  isActive?: boolean;
+  certificateNo?: string;
+  traceability?: string;
+  certificateAgency?: string;
+}
+
+
+export interface CustomerType {
+  customerName: string;
+  customerEmail: string;
+  displayName?: string;
+  contactPersonNumber?: string;
+  additionalDetails?: string;
+  customerSpecificRequirement?: string;
+  primaryAddress?: string;
+  parentCompany?: string;
+  childCompanies?: string;
+  contactPersonName?: string;
+  customerCurrency?: string;
+  website?: string;
+  attachments?: any[];
+  addresses: any[];
+  availableWorkspaces: string[];
+}
+
+export type TemplateTypeEnum = "Sticker" | "Certificate";
+export type certificateDimensionUnit = "in" | "mm" | "cm" | "px";
+
+export interface HeaderSection {
+  height: number;
+  unit: certificateDimensionUnit;
+  pageType:  | "firstPage"
+  | "lastPage"
+  | "default";
+  canvasData: string;
+  active: boolean;
+}
+
+
+export interface CertificateConfig {
+  format: "A4" | "Custom" | "A5";
+  dimensions: {
+    width: number;
+    height: number;
+    unit: "in" | "mm" | "cm" | "px";
+  };
+  margin: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+  isTemplateBilingual: boolean;
+  work?: WorkType;
+
+  headers: {
+    firstPageHeader: HeaderSection[];
+    lastPageHeader: HeaderSection[];
+    defaultHeader: HeaderSection[];
+  };
+  footers: {
+    firstPageFooter: FooterSection[];
+    lastPageFooter: FooterSection[];
+    defaultFooter: FooterSection[];
+  };
+  contents: CertificateContent[];
+}
+
+export type CertificateContentComponentType =
+  | "Custom Field"
+  | "Reference Instrument"
+  | "Calibration Data"
+  | "Customer and Instrument Details"
+  | "Image";
+
+export interface CustomField {
+  id: string;
+  fieldLabel: string;
+  fieldValue: string;
+}
+
+export type ReferenceInstrumentColumn =
+  | "equipmentName"
+  | "serialNumber"
+  | "traceability"
+  | "certificateNumber"
+  | "calibrationDueOn"
+  | "companyName"
+  | "recommendedDue"
+  | "companyEmail";
+
+export interface ReferenceInstrument {
+  title?: string;
+  nextLevelOfmasterInstrument?: boolean;
+  fields: Record<
+    ReferenceInstrumentColumn,
+    {
+      isActive: boolean;
+      order: number;
+      value?: string | number | Date | null;
+    }
+  >;
+}
+export interface CertificateContent {
+  order: number;
+  componentType: CertificateContentComponentType;
+  calibrationData?: WorkType;
+  customField?: CustomField;
+  referenceInstrument?: ReferenceInstrument;
+  customerAndInstrumentDetails?: CustomerAndInstrumentDetails;
+}
+export type CustomerAndInstrumentDetailsColumn =
+  | "Customer name and Address"
+  | "Received Date"
+  | "Calibrated Date"
+  | "Calibration Due On"
+  | "Location"
+  | "Data Type"
+  | "As Found Condition"
+  | "As Left Condition"
+  | "Temperature"
+  | "Date of Issue"
+  | "Instrument Type"
+  | "Instrument Manufacturer"
+  | "Instrument Model Number"
+  | "Instrument Serial Number"
+  | "Instrument Tag Number"
+  | "Humidity";
+export interface CustomerAndInstrumentDetails {
+  noOfColumns: number;
+  fields: Record<
+    CustomerAndInstrumentDetailsColumn,
+    {
+      isActive: boolean;
+      order: number;
+      value?: string | number | Date | null;
+    }
+  >;
+}
+export interface FooterSection {
+  height: number;
+  unit: certificateDimensionUnit;
+  pageType:   | "firstPage"
+  | "lastPage"
+  | "default";
+  canvasData: string;
+  active: boolean;
+}
+
+export interface TemplateType {
+  name: string;
+  templateType: TemplateTypeEnum;
+  stickerConfig?: any;
+  certificateConfig?: CertificateConfig;
+}
