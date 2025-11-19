@@ -1,14 +1,13 @@
 
 import './App.css'
-import PDFGeneratorApp from './PDFPreviewGenerator'
-import PDFGeneratorAppForWork from './PDFPreviewGeneratorForWork'
+import TemplatePDFApp from './PDFPreviewGeneratorForWork'
 
 function App() {
 
   return (
     <div className="App">
 {/* <PDFGeneratorApp /> */}
-<PDFGeneratorAppForWork />
+<TemplatePDFApp />
 
       </div>
   )

@@ -73,7 +73,7 @@ export interface TableComponentForPdf extends BaseComponent {
   theme?: 'striped' | 'grid' | 'plain';
 }
 export interface HeaderOrFooterContent {
-  type: "text" | "image" | "line";
+  type: "text" | "image" | "line" | "rect" | "circle" | "path";
   text?: string;
   src?: string;           // image URL/base64
   x?: number;             // x position (optional)
@@ -83,6 +83,16 @@ export interface HeaderOrFooterContent {
   fontSize?: number;
   bold?: boolean;
   align?: "left" | "center" | "right";
+  color?: [number, number, number];
+  fill?: [number, number, number];
+  stroke?: [number, number, number];
+  x1?: number;            // for line
+  y1?: number;            // for line
+  x2?: number;            // for line
+  y2?: number;            // for line
+  strokeWidth?: number;  // for line
+  radius?: number;       // for circle
+  path?: string;         // for custom shapes
 }
 
 export interface PageHeaderOrFooterComponent extends BaseComponent {

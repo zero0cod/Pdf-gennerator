@@ -575,3 +575,4 @@ export async function generateCertificatePDF(
   
   return generator;
 }
+

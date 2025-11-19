@@ -1,190 +1,27 @@
-import { useState, type SetStateAction } from "react";
+import { useState } from "react";
 import { Eye, Download, FileText, Loader2 } from "lucide-react";
-import type { ComponentProps } from "./types";
-import { PDFGenerator } from "./pdfGeneratorUtility";
+import { PDFGeneratorUtilityForWorks } from "./pdfGeneratorUtilityForWork";
+import { template } from "./sampleWork";
 import { sampleWorksheet } from "./sample-worksheeet";
-import { getCertificateDataForPDFFromWork } from "./worksheet-to-pdf";
-import { sampleWork, template } from "./sampleWork";
 
 
-//  const sampleData : ComponentProps[]= [
-//      {
-//     type: "pageHeader",
-//     items: [
-//       {
-//         type: "image",
-//         src: "",
-//         x: 15,
-//         y: 12,
-//         width: 20,
-//         height: 15,
-//       },
-//       {
-//         type: "text",
-//         text: "Metquay",
-//         align: "center",
-//         y: 10,
-//         fontSize: 12,
-//         bold: true,
-//       },
-//       {
-//         type: "text",
-//         text: "Building No: 5421, Old Street\nAustin, Texas, USA 956585\nPh: +17186520848",
-//         y: 16,
-//         align: "center",
-//         fontSize: 9,
-//       },
-//       {
-//         type: "image",
-//         src: "",
-//         x: 170,
-//         y: 12,
-//         width: 25,
-//         height: 15,
-//       },
-//       {
-//         type: "text",
-//         text: "CERTIFICATE OF CALIBRATION",
-//         align: "center",
-//         y: 35,
-//         fontSize: 14,
-//         bold: true,
-//       },
-//       {
-//         type: "text",
-//         text: "Certificate No: UAL/000087/25",
-//         align: "center",
-//         y: 40,
-//         fontSize: 10,
-//       },
-//     ],
-//     backgroundColor: [255, 255, 255],
-//     pageNumbers: [1, 2, 3],
-//   },
-//     {
-//       type: 'space',
-//       height: 10
-//     },
-//     {
-//       type: 'heading',
-//       text: 'Executive Summary',
-//       level: 1
-//     },
-//     {
-//       type: 'paragraph',
-//       text: 'This report provides a comprehensive overview of our company performance throughout 2024. We have achieved significant milestones in revenue growth, customer acquisition, and market expansion. Our strategic initiatives have positioned us well for continued success in the coming years.',
-//       fontSize: 12
-//     },
-//     {
-//       type: 'space',
-//       height: 10
-//     },
-//     {
-//       type: 'heading',
-//       text: 'Key Metrics',
-//       level: 1
-//     },
-//     {
-//       type: 'table',
-//       headers: ['Metric', 'Q1', 'Q2', 'Q3', 'Q4'],
-//       data: [
-//         ['Revenue ($M)', '12.5', '15.3', '18.7', '22.1'],
-//         ['Customers', '1,250', '1,680', '2,100', '2,850'],
-//         ['Growth Rate', '12%', '15%', '18%', '21%'],
-//         ['Market Share', '8.2%', '9.1%', '10.5%', '12.3%']
-//       ],
-//       theme: 'grid',
-//       headerColor: [52, 73, 94],
-//       spacing: 15
-//     },
-//     {
-//       type: 'heading',
-//       text: 'Product Performance',
-//       level: 1
-//     },
-//     {
-//       type: 'paragraph',
-//       text: 'Our product portfolio has shown exceptional performance across all categories. The following highlights demonstrate our commitment to innovation and customer satisfaction.',
-//       fontSize: 12
-//     },
-//     {
-//       type: 'list',
-//       listType: 'bullet',
-//       items: [
-//         'Product A achieved 150% of sales target',
-//         'Product B expanded to 5 new markets',
-//         'Product C received industry recognition award',
-//         'New Product D launched successfully in Q4'
-//       ],
-//       fontSize: 11,
-//       spacing: 0
-//     },
-//     {
-//       type: 'heading',
-//       text: 'Customer Satisfaction',
-//       level: 1
-//     },
-//     {
-//       type: 'paragraph',
-//       text: 'Customer satisfaction remains our top priority. We conducted comprehensive surveys and gathered feedback throughout the year.',
-//       fontSize: 12
-//     },
-//     {
-//       type: 'table',
-//       headers: ['Category', 'Rating', 'Responses'],
-//       data: [
-//         ['Product Quality', '4.8/5.0', '2,450'],
-//         ['Customer Service', '4.7/5.0', '2,380'],
-//         ['Value for Money', '4.6/5.0', '2,410'],
-//         ['Overall Experience', '4.7/5.0', '2,500']
-//       ],
-//       theme: 'striped',
-//       spacing: 15
-//     },
-//     {
-//       type: 'heading',
-//       text: 'Future Outlook',
-//       level: 1
-//     },
-//     {
-//       type: 'paragraph',
-//       text: 'Looking ahead to 2025, we are optimistic about continued growth and expansion. Our strategic initiatives include:',
-//       fontSize: 12
-//     },
-//     {
-//       type: 'list',
-//       listType: 'number',
-//       items: [
-//         'Expansion into 3 new international markets',
-//         'Launch of 2 innovative product lines',
-//         'Investment in AI and automation technologies',
-//         'Enhanced customer support infrastructure'
-//       ],
-//       fontSize: 11,
-//       spacing: 10
-//     },
-//     // Footer
-//   {type:"pageFooter",
-//     height: 10,
-//     items:[
-//       {
-//         type:"line",
-//         width:0.5,
-//       },
-//       {
-//         type: "text",
-//         text: 'This certificate is confidential. For questions, contact: support@metquay.com',
-//         fontSize: 9,
-//         align: 'center',
-//         }
-//     ],
-//   },
-//   ];
-
-const PDFGeneratorAppForWork = () => {
+const TemplatePDFApp = () => {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+
+  const sampleWork = {
+    workNo: "WK-2025-5501",
+    calibrations: [
+      {
+        type: "As Found",
+        startDate: "2025-01-12T10:15:00Z",
+        endDate: "2025-01-12T10:45:00Z",
+        passed: true
+      }
+    ]
+  };
 
   const handleGenerate = async (action: "preview" | "download") => {
     setLoading(true);
@@ -192,93 +29,18 @@ const PDFGeneratorAppForWork = () => {
     setError(null);
 
     try {
-      const generator = new PDFGenerator();
-      console.log(sampleWorksheet);
-      const certificateComponents =  getCertificateDataForPDFFromWork(template,sampleWork);
-      const worksheetToPdfPreviewData: ComponentProps[] = [
-  // Header
-  {
-    type: "pageHeader",
-    items: [
-      {
-        type: "image",
-        src: "",
-        x: 15,
-        y: 12,
-        width: 20,
-        height: 15,
-      },
-      {
-        type: "text",
-        text: "Metquay",
-        align: "center",
-        y: 10,
-        fontSize: 12,
-        bold: true,
-      },
-      {
-        type: "text",
-        text: "Building No: 5421, Old Street\nAustin, Texas, USA 956585\nPh: +17186520848",
-        y: 16,
-        align: "center",
-        fontSize: 9,
-      },
-      {
-        type: "image",
-        src: "",
-        x: 170,
-        y: 12,
-        width: 25,
-        height: 15,
-      },
-      {
-        type: "text",
-        text: "CERTIFICATE OF CALIBRATION",
-        align: "center",
-        y: 35,
-        fontSize: 14,
-        bold: true,
-      },
-      {
-        type: "text",
-        text: "Certificate No: UAL/000087/25",
-        align: "center",
-        y: 40,
-        fontSize: 10,
-      },
-    ],
-    backgroundColor: [255, 255, 255],
-    pageNumbers: [1, 2, 3],
-  },
- 
-  
-  // Dynamic content from worksheet
-  ...certificateComponents,
-  
-  // Footer
-  {type:"pageFooter",
-    height: 10,
-    items:[
-      {
-        type:"line",
-        width:0.5,
-      },
-      {
-        type: "text",
-        text: 'This certificate is confidential. For questions, contact: support@metquay.com',
-        fontSize: 9,
-        align: 'center',
-        }
-    ],
-  },
-];
-      await generator.generate(worksheetToPdfPreviewData, {
-        addPageNumbers: true,
-        onProgress: (prog: SetStateAction<number>) => setProgress(prog)
+      const generator = new PDFGeneratorUtilityForWorks();
+      
+      await generator.generateCertificateFromTemplate(template, sampleWork,sampleWorksheet ,{
+        addPageNumbers: false,
+        onProgress: (prog: number) => setProgress(prog)
       });
 
-      if (action === "preview") generator.preview();
-      else generator.download("business-report-2024.pdf");
+      if (action === "preview") {
+        generator.preview();
+      } else {
+        generator.download("calibration-certificate.pdf");
+      }
 
       setTimeout(() => {
         setLoading(false);
@@ -293,7 +55,7 @@ const PDFGeneratorAppForWork = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-lg shadow-2xl p-8">
           {/* Header */}
           <div className="flex items-center gap-4 mb-8">
@@ -301,11 +63,58 @@ const PDFGeneratorAppForWork = () => {
               <FileText className="w-8 h-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">PDF Generator Utility</h1>
+              <h1 className="text-3xl font-bold text-gray-800">
+                Template-Based PDF Generator
+              </h1>
               <p className="text-gray-600 mt-1">
-                Generate PDFs with automatic page breaks • No split components
+                Supports first page, default, and last page headers/footers
               </p>
             </div>
+          </div>
+
+          {/* Template Info */}
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+            <h2 className="text-lg font-semibold text-gray-800 mb-3">Template Configuration</h2>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-gray-700">Format:</span>
+                <span className="ml-2 text-gray-600">{template.certificateConfig.format}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Type:</span>
+                <span className="ml-2 text-gray-600">{template.templateType}</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">First Page Header:</span>
+                <span className="ml-2 text-green-600">✓ Active</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Last Page Footer:</span>
+                <span className="ml-2 text-green-600">✓ Active</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Features */}
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <h3 className="text-md font-semibold text-blue-900 mb-3">✨ Key Features</h3>
+            <ul className="space-y-2 text-sm text-blue-800">
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Different headers/footers for first, default, and last pages</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Fabric.js canvas data automatically converted to PDF elements</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+              </li>
+              <li className="flex items-start">
+                <span className="mr-2">•</span>
+                <span>Automatic page breaks with proper header/footer inheritance</span>
+              </li>
+            </ul>
           </div>
 
           {/* Buttons */}
@@ -315,7 +124,11 @@ const PDFGeneratorAppForWork = () => {
               disabled={loading}
               className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 font-medium shadow-lg"
             >
-              {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Eye className="w-5 h-5" />}
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Eye className="w-5 h-5" />
+              )}
               Preview PDF
             </button>
 
@@ -333,7 +146,9 @@ const PDFGeneratorAppForWork = () => {
           {loading && (
             <div className="mb-8">
               <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-medium text-gray-700">Generating PDF...</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Generating PDF...
+                </span>
                 <span className="text-sm font-medium text-indigo-600">
                   {progress.toFixed(0)}%
                 </span>
@@ -354,11 +169,30 @@ const PDFGeneratorAppForWork = () => {
             </div>
           )}
 
-          {/* Document info, usage examples ... same as before */}
+          {/* Usage Instructions */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">How to Use</h3>
+            <div className="bg-gray-900 text-gray-100 rounded-lg p-4 text-sm font-mono overflow-x-auto">
+              <pre>{`// Import the enhanced PDF generator
+import { PDFGenerator } from './pdfGeneratorUtility';
+import { template, sampleWork } from './sampleWork';
+
+// Generate PDF from template
+const generator = new PDFGenerator();
+await generator.generateFromTemplate(template, sampleWork, {
+  addPageNumbers: true,
+  onProgress: (progress) => console.log(progress)
+});
+
+// Preview or download
+generator.preview();
+generator.download('certificate.pdf');`}</pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default PDFGeneratorAppForWork;
+export default TemplatePDFApp;
